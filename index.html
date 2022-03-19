@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Address</title>
+    <link rel="stylesheet" href="./style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Shipping</h1>
+        <p>Please enter your shipping details.</p>
+        <!-- <hr /> -->
+        <div class="form">
+
+          <!-- START address group -->
+          <div id="addressGroup"></div>
+          <!-- END address group -->
+
+
+
+        </div>
+        <hr>
+        <button class="button">Continue</button>
+      </div>
+
+
+      
+
+
+
+    <script src="./addressclean.js"></script>
+    <script src="./us.subsweet.js"></script>
+
+
+      <script>
+        const addressGroup = document.getElementById('addressGroup');
+        
+        
+        
+        function extractFields(str) {
+          var results = [], re = /{([^}]+)}/g, text;
+          while(text = re.exec(str)) {
+            results.push(text[1]);
+          }
+          return results;
+        }
+        function createCountry(id, options, country) {
+          var select = document.createElement('select');
+          select.id = id;
+          select.className = 'field__input';
+          select.name = id;
+          Object.keys(options).forEach(function(option) {
+            var opt = document.createElement('option');
+            // opt.value = options[option].name;
+            opt.value = option;
+            opt.innerHTML = options[option].name;
+            select.appendChild(opt);
+          });
+          select.selectedIndex = 2
+          return select;
+        }
+        function createProvince(id, options) {
+          var select = document.createElement('select');
+          select.id = "state";
+          select.className = 'field__input';
+          select.name = "state";
+          Object.keys(options).forEach(function(option) {
+            var opt = document.createElement('option');
+            opt.value = options[option].code;
+            opt.innerHTML = option;
+            select.appendChild(opt);
+          });
+          return select;
+        }
+        function createLabels(input, country) {
+          let inputLabels = {...CountriesDefaultInfo.labels, ...Countries[country].labels}
+          return `<span class="field__label" for="${input}">${inputLabels[input]}</span>`
+        }
+
+        function inputType(type, country) {
+          if (type === 'country') {
+            return createCountry(type, Countries, country).outerHTML;
+          }
+          if (type === 'province') {
+            return createProvince(type, Countries[country].provinces).outerHTML;
+          } else {
+            return '<input class="field__input" type="text" name="' + type + '" id="' + type + '" />';
+          }
+        }
+        
+        function createFields(fields, country) {
+          var html = ''
+          if (fields.length == 1) {
+            html = `
+            <label class="field">
+              ${createLabels(fields[0], country)}
+              ${inputType(fields[0], country)}
+            </label>
+            `
+          } else if (fields.length == 2) {
+            html = `
+            <div class="fields fields--2">
+              <label class="field">
+                ${createLabels(fields[0], country)}
+                ${inputType(fields[0], country)}
+              </label>
+              <label class="field">
+                ${createLabels(fields[1], country)}
+                ${inputType(fields[1], country)}
+              </label>
+            </div>
+            `
+          } else if (fields.length == 3) {
+            html = `
+            <div class="fields fields--3">
+              <label class="field">
+                ${createLabels(fields[0], country)}
+                ${inputType(fields[0], country)}
+              </label>
+              <label class="field">
+                ${createLabels(fields[1], country)}
+                ${inputType(fields[1], country)}
+              </label>
+              <label class="field">
+                ${createLabels(fields[2], country)}
+                ${inputType(fields[2], country)}
+              </label>
+            </div>
+            `
+          }
+          return html;
+        };
+
+
+        let selectedCountry = 'US';
+
+        function initForm(country) {
+          CountriesDefaultInfo.address_format.edit[Countries[country].address_format.edit].split("_").forEach(field => {
+            addressGroup.innerHTML += createFields(extractFields(field), country);
+          });
+          var countrySelect = addressGroup.querySelector('#country')
+          addressGroup.querySelector("#country").selectedIndex = Object.keys(Countries).findIndex(cc => cc === country);
+          country === "US" ? initZipUS() : void 0;
+          countrySelect.addEventListener('change', function(e) {
+            selectedCountry = e.target.value;
+            addressGroup.innerHTML = '';
+            initForm(e.target.value);
+            addressGroup.querySelector("#country").selectedIndex = e.target.selectedIndex;
+          });
+        }
+
+        initForm(selectedCountry);
+        
+        // var hash = {};
+        // var keys = [...Object.values(Countries)]
+        // var values = [...Object.keys(Countries)]
+
+        // for (var i = 0; i < keys.length; i++)
+        // hash[keys[i].code] = values[i];
+
+        // app.innerHTML = af;
+
+
+
+      </script>
+
+
+</body>
+</html>
