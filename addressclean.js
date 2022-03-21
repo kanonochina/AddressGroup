@@ -17,7 +17,7 @@ var CountriesDefaultInfo = {
             "2": "{country}_{company}_{address1}_{address2}_{city}",
             "3": "{country}_{company}_{address1}_{address2}_{zip}{city}{province}",
             "4": "{country}_{company}_{address1}_{address2}_{city}{province}{zip}",
-            "5": "_{company}_{address1}_{address2}_{city}_{country}{province}{zip}",
+            "5": "{company}_{address1}_{address2}_{city}_{country}{province}{zip}",
             "6": "{country}_{company}_{address1}_{address2}_{zip}{city}_{province}",
             "7": "{country}_{company}_{address1}_{address2}_{zip}",
             "8": "{country}_{company}_{address1}_{address2}_{city}{province}",
@@ -31,6 +31,7 @@ var CountriesDefaultInfo = {
           }
         }
       }
+
 var Countries = {
   "AF": {
       "name": "Afghanistan",

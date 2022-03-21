@@ -15,7 +15,15 @@
         <div class="form">
 
           <!-- START address group -->
-          <div id="addressGroup"></div>
+          <div class="addressGroup">
+              <div id="shipping-form">
+              </div>
+              <!-- <div>
+                <h4>Click Here if Billing is Different from Shipping Address</h4>
+              </div> -->
+              <!-- <div id="billing-form">
+              </div> -->
+          </div>
           <!-- END address group -->
 
 
@@ -35,10 +43,9 @@
 
 
       <script>
-        const addressGroup = document.getElementById('addressGroup');
-        
-        
-        
+        const shippingForm = document.getElementById('shipping-form');
+        // const addressGroup = document.getElementById('addressGroup');
+
         function extractFields(str) {
           var results = [], re = /{([^}]+)}/g, text;
           while(text = re.exec(str)) {
@@ -79,6 +86,12 @@
           return `<span class="field__label" for="${input}">${inputLabels[input]}</span>`
         }
 
+        const retainSetters = (form, values) => {
+          Object.entries(values).forEach(el => {
+            form.forEach(l => l.name === el[0] ? l.value = el[1] : void 0)
+          })
+        }
+
         function inputType(type, country) {
           if (type === 'country') {
             return createCountry(type, Countries, country).outerHTML;
@@ -86,7 +99,7 @@
           if (type === 'province') {
             return createProvince(type, Countries[country].provinces).outerHTML;
           } else {
-            return '<input class="field__input" type="text" name="' + type + '" id="' + type + '" />';
+            return '<input class="field__input retain" type="text" name="' + type + '" id="' + type + '" />';
           }
         }
         
@@ -136,22 +149,25 @@
 
         let selectedCountry = 'US';
 
-        function initForm(country) {
+        function shippingInit(country) {
           CountriesDefaultInfo.address_format.edit[Countries[country].address_format.edit].split("_").forEach(field => {
-            addressGroup.innerHTML += createFields(extractFields(field), country);
+            shippingForm.innerHTML += createFields(extractFields(field), country);
           });
-          var countrySelect = addressGroup.querySelector('#country')
-          addressGroup.querySelector("#country").selectedIndex = Object.keys(Countries).findIndex(cc => cc === country);
+          var countrySelect = shippingForm.querySelector('#country')
+          shippingForm.querySelector("#country").selectedIndex = Object.keys(Countries).findIndex(cc => cc === country);
           country === "US" ? initZipUS() : void 0;
           countrySelect.addEventListener('change', function(e) {
+            var retain = Object.fromEntries(Array.from(e.target.parentNode.parentNode.parentNode.querySelectorAll('.retain')).map(el => [el.name, el.value]))
+            console.log(e.target.parentNode.parentNode.querySelectorAll(".retain"))
             selectedCountry = e.target.value;
-            addressGroup.innerHTML = '';
-            initForm(e.target.value);
-            addressGroup.querySelector("#country").selectedIndex = e.target.selectedIndex;
+            shippingForm.innerHTML = '';
+            shippingInit(e.target.value);
+            shippingForm.querySelector("#country").selectedIndex = e.target.selectedIndex;
+            retainSetters(document.querySelectorAll("#shipping-form .retain"), retain)
           });
         }
 
-        initForm(selectedCountry);
+        shippingInit(selectedCountry);
         
         // var hash = {};
         // var keys = [...Object.values(Countries)]
@@ -163,7 +179,19 @@
         // app.innerHTML = af;
 
 
+        const retainGetters = form => {
+          return Object.fromEntries(Array.from(form).map(el => [el.name, el.value]))
+        }
+        
+        // var rg = retainGetters(document.querySelectorAll("#shipping-form .retain"))
+        
 
+        
+        
+        
+        
+
+        
       </script>
 
 
