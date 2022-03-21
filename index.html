@@ -18,11 +18,14 @@
           <div class="addressGroup">
               <div id="shipping-form">
               </div>
-              <!-- <div>
-                <h4>Click Here if Billing is Different from Shipping Address</h4>
-              </div> -->
-              <!-- <div id="billing-form">
-              </div> -->
+
+              
+
+              
+              
+              <div id="billing-form">
+                <div onclick="billingInit('US')"><p class="pointer">Click Here if Billing is Different from Shipping Address</p></div>
+              </div>
           </div>
           <!-- END address group -->
 
@@ -44,6 +47,7 @@
 
       <script>
         const shippingForm = document.getElementById('shipping-form');
+        const billingForm = document.getElementById('billing-form');
         // const addressGroup = document.getElementById('addressGroup');
 
         function extractFields(str) {
@@ -157,13 +161,37 @@
           shippingForm.querySelector("#country").selectedIndex = Object.keys(Countries).findIndex(cc => cc === country);
           country === "US" ? initZipUS() : void 0;
           countrySelect.addEventListener('change', function(e) {
-            var retain = Object.fromEntries(Array.from(e.target.parentNode.parentNode.parentNode.querySelectorAll('.retain')).map(el => [el.name, el.value]))
+            var retain = Object.fromEntries(Array.from(e.target.parentNode.parentNode.parentNode.querySelectorAll('#shipping-form .retain')).map(el => [el.name, el.value]))
             console.log(e.target.parentNode.parentNode.querySelectorAll(".retain"))
             selectedCountry = e.target.value;
             shippingForm.innerHTML = '';
             shippingInit(e.target.value);
             shippingForm.querySelector("#country").selectedIndex = e.target.selectedIndex;
             retainSetters(document.querySelectorAll("#shipping-form .retain"), retain)
+          });
+        }
+        function closebilling() {
+          document.querySelector("#billing-form").innerHTML = '<div onclick="billingInit(\'US\')"><p class="pointer">Click Here if Billing is Different from Shipping Address</p></div>';
+          }
+        function billingInit(country) {
+          
+          var closebilling = `<div id="closebilling" onclick="closebilling()"><p class="pointer">Billing</p></div>`;
+          billingForm.innerHTML = closebilling;
+          // billingForm.innerHTML = `<h3 onclick='this.parentNode.parentNode.parentNode.innerHTML = ${closebilling}'><span>Billing</span></h3>`
+          CountriesDefaultInfo.address_format.edit[Countries[country].address_format.edit].split("_").forEach(field => {
+            billingForm.innerHTML += createFields(extractFields(field), country);
+          });
+          var countrySelect = billingForm.querySelector('#country')
+          billingForm.querySelector("#country").selectedIndex = Object.keys(Countries).findIndex(cc => cc === country);
+          country === "US" ? initZipUS() : void 0;
+          countrySelect.addEventListener('change', function(e) {
+            var retain = Object.fromEntries(Array.from(e.target.parentNode.parentNode.parentNode.querySelectorAll('#billing-form .retain')).map(el => [el.name, el.value]))
+            console.log(e.target.parentNode.parentNode.querySelectorAll(".retain"))
+            selectedCountry = e.target.value;
+            billingForm.innerHTML = '';
+            billingInit(e.target.value);
+            billingForm.querySelector("#country").selectedIndex = e.target.selectedIndex;
+            retainSetters(document.querySelectorAll("#billing-form .retain"), retain)
           });
         }
 

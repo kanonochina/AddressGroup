@@ -50,7 +50,10 @@
     display: grid;
     grid-gap: 1rem;
   }
-  
+  .pointer  {
+    cursor: pointer;
+    margin-bottom: 0px;
+  }
   .field {
     width: 100%;
     display: flex;
